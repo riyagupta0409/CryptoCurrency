@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Currencies</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</head>
+
+<!--CSS-->
+<style>
+    body {
+    padding: 0;
+    }
+
+    .favourites {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        height: 100%;
+        width: 0;
+        transition: 0.4s;
+        background-color: #ffffff;
+        z-index: 100;
+        overflow-x: hidden;
+        overflow-y: auto;
+        border-left: 2px solid #ccc;
+    }
+
+    .favourites .closebtn {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        font-size: 36px;
+        color: #000080;
+    }
+
+    .favourites .closebtn:hover {
+        text-decoration: none;
+    }
+
+    #favourite-button{
+        position:fixed;
+        top:10px;
+        right:10px;
+        outline:none ;
+        border:none;
+        background-color: #000080;
+        color: #fff;
+        font-size: 20px;
+        padding:5px 10px
+    }
+
+    #fetch-button {
+        background-color: #000080;
+        color: #ffffff;
+        outline:none;
+        border:none;
+        padding:5px 15px;
+        border-radius: 7px;
+        font-size: 24px;
+        letter-spacing:1px;
+    }
+
+    .more-details {
+        color: #000;
+        outline:none;
+        border:none;
+        padding:2px 8px;
+        border-radius: 7px;
+        font-size: 18px;
+        letter-spacing:1px;
+        cursor: pointer;
+    }
+
+    .data{
+        border-top:2px solid #ccc;
+    }
+    
+    .close:focus {
+        outline:none;
+    }
+
+    .remove-favourite , .add-to-favourite , .remove-favourite-from-section{
+        cursor:pointer;
+    }
+
+    </style> 
+
+
+<body>
+    <!-- Favourites side favourites -->
+    <div id="favourites" class="favourites d-flex flex-column " style="padding-top:60px;">
+        <a href="javascript:void(0)" class="closebtn" onclick="closefavourites()">&times;</a>
+        <h2 style='text-align:center'>Favourites</h2>
+        <div id="favourite-list" class='favourite-list d-flex flex-column px-4'>
+
+        </div>
+    </div>
+
+    <div class="top-line d-flex flex-row justify-content-between flex-wrap">
+        <h3 class='ml-2 mt-2'>CRYPTO CURRENCY DATA</h3>
+        <button class="nav-link" id="favourite-button" onclick="openfavourites()">Favourites</button>
+    </div>
+    
+    
+    <!--Fetch button--> 
+    <div id="fetch-button-div" class="fetch-button-div d-flex justify-content-center align-center mt-5"  >
+        <button id="fetch-button" onclick="getAllData()">Fetch Data</button>
+    </div>
+
+    <!--Show all data div-->
+    <div class='mt-5' id="main-data-div" style="display:none;">
+        <table class="table w-75 mx-auto table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Name </th>
+                <th scope="col">Favourites</th>
+                <th scope="col">More Details</th>
+              </tr>
+            </thead>
+            <tbody id="all-data">
+
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+<script src = "https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    // functions to open or close a favourites
+    function openfavourites() {
+        document.getElementById("favourites").style.width = "280px";
+        show_all_favourites()
+    }
+    // to close the favourite section 
+    function closefavourites() {
+        document.getElementById("favourites").style.width = "0";
+    }
+
+    // function to fetch all crypto currency data from api 
+    function getAllData() {
+        document.getElementById("fetch-button").innerHTML = '<span class="spinner-border"></span> Fetching';
+        // ajax request to fetch the results from the api 
+        $.ajax({
+            method: 'GET',
+            url : '/fetch/all',
+            // on errror  
+            error:function(){
+                document.getElementById("fetch-button-div").style.display = 'none';
+                document.getElementById("fetch-button").style.display = 'none';
+                document.getElementById('main-data-div').style.display = 'block';
+                document.getElementById('main-data-div').innerHTML = `could not process your request at the moment`;
+            
+            },
+            // on success display tha data
+            success: function(result) {
+                var favouriteData = window.localStorage.getItem('favourites_string');
+                if(favouriteData===null) {
+                    favouriteData =[];
+                }else{
+                    favouriteData = JSON.parse(favouriteData)
+                }
+                // hide fetch button and show display data list 
+                document.getElementById("fetch-button-div").style.display = 'none';
+                document.getElementById("fetch-button").style.display = 'none';
+                document.getElementById('main-data-div').style.display = 'block';
+                result = result.data;
+                contentHTML = ''
+                // make html from the data derived
+                $.each(result, function( index, value ) {
+                   contentHTML += 
+                        `<tr class="currency-data" name="${value['name']}" id="${value['id']}">
+                            <th scope="row" class='w-50'>
+                                <span><img style="height:30px;width:30px" src="https://s2.coinmarketcap.com/static/img/coins/64x64/${value['id']}.png"></span>
+                                <span  style="font-size:18px"> ${value['name']} </span> 
+                            </th>`
+                    var id_value = value['id'].toString();
+                    var name_value = value['name'].toString();
+                    var value_ = id_value +'|'+name_value;
+                    if(!favouriteData.includes(value_)){
+                        contentHTML +=`<td class="add-to-favourite"><i class="fa fa-star-o" style="font-size:24px"></i></td>`                           
+                    }else{
+                        contentHTML +=`<td class="remove-favourite"><i class="fa fa-star" style="font-size:24px"></i></td>`
+                    }
+                            
+                   contentHTML +=  `<td class="more-details w-25" id="${value['id']} type="button" data-toggle="modal" data-target="#model${value['id']}"">More Details</td>
+                                <div class="modal fade" id="model${value['id']}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">
+                                                <span><img style="heoght:30px;width:30px" src="https://s2.coinmarketcap.com/static/img/coins/64x64/${value['id']}.png"></span>
+                                                <span  style="font-size:18px"> ${value['name']} </span> 
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h5>Symbol : ${value['symbol']}</h5>
+                                            <h5>24 hrs Price Change  : ${value['quote']['USD']['percent_change_24h']}%</h5>
+                                            <h5>Market Cap  : $${value['quote']['USD']['market_cap']}</h5>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </tr>`
+                });
+                document.getElementById('all-data').innerHTML = contentHTML
+
+            }
+        })
+    }
+
+    // function to check click on add to favourite and remove favourite 
+    $(document).click(function(e) {
+            if(e.target.parentElement.className==='add-to-favourite') {
+                add_to_favourite(e.target.parentElement,e.target.parentElement.parentElement)
+            }else if(e.target.parentElement.className==='remove-favourite'){
+                remove_from_favourite(e.target.parentElement,e.target.parentElement.parentElement)
+            }else if(e.target.parentElement.className==='remove-favourite'){
+                remove_from_favourite(e.target.parentElement,e.target.parentElement.parentElement)
+            }
+    });
+
+    // function to add to favourite
+    // child is the td of i 
+    // node is the tr of currency 
+    function add_to_favourite(child,node){
+        // get favourite data from localStorage
+        var favouriteData = window.localStorage.getItem('favourites_string');
+        if(favouriteData===null) {
+            favouriteData =[];
+        }else{
+            favouriteData = JSON.parse(favouriteData)
+        }
+        // push the piped data to the local storage 
+        id = node.getAttribute('id')
+        name = node.getAttribute('name')
+        complete = id.toString()+'|'+name
+        favouriteData.push(complete)
+        window.localStorage.setItem('favourites_string',JSON.stringify(favouriteData))
+        // edits in html 
+        show_new_in_favourite(child,node);
+    }
+
+    // function to show the selected currency in favourites 
+    function show_new_in_favourite(child,node){
+        currency_id = node.getAttribute('id');
+        name = node.getAttribute('name');
+        var newFavElement = document.createElement('div');
+        var id = 'favourite'+currency_id
+        newFavElement.classList.add('my-2')
+        newFavElement.id = id;
+        // adding a new node in the favourites section
+        var contentHTML = `<div id="favourite${currency_id}" class="d-flex flex-row justify-content-between" type="button" data-toggle="modal" data-target="#model${currency_id}">   
+                                    <div class="d-flex flex-row">
+                                        <span><img style="height:30px;width:30px" src="https://s2.coinmarketcap.com/static/img/coins/64x64/${currency_id}.png"></span>
+                                        <span  style="font-size:18px" class="ml-2">  ${ name} </span> 
+                                    </div>
+                                </div>`
+        newFavElement.innerHTML = contentHTML
+        document.getElementById('favourite-list').appendChild(newFavElement);
+
+        // change class name of i in all-data section 
+        child.className = 'remove-favourite';
+        child.innerHTML = '<td class="remove-favourite"><i class="fa fa-star" style="font-size:24px"></i></td>'
+    }
+
+    // remove from favourite function 
+    function remove_from_favourite(child,node){
+        // getting piped data from localStorage
+        var favouriteData = window.localStorage.getItem('favourites_string');
+        favouriteData = JSON.parse(favouriteData)
+
+        // removing particular currency from localStorage
+        id = node.getAttribute('id')
+        name = node.getAttribute('name') 
+        to_remove = id.toString()+'|'+name;
+        const index = favouriteData.indexOf(to_remove);
+        if (index > -1) {
+        favouriteData.splice(index, 1);
+        }
+        // updating localStorage 
+        window.localStorage.setItem('favourites_string',JSON.stringify(favouriteData))
+        remove_from_show_in_favourite(child,node);
+    }
+
+    // remove the currency from favourites section 
+    function  remove_from_show_in_favourite(child,node){
+        id = node.id
+        var check_id = 'favourite'+id
+        console.log(check_id)
+        var node_to_remove = document.getElementById(check_id);
+        
+        console.log(node_to_remove)
+        document.getElementById('favourite-list').removeChild(node_to_remove);
+        child.className = 'add-to-favourite';
+        child.innerHTML = `<td class="add-to-favourite"><i class="fa fa-star-o" style="font-size:24px"></i></td>`  
+    }
+
+    // fetch all favourite data and show in favourite section
+    function show_all_favourites(){
+        // clear if any thing is present inside 
+        // complete data will be added again 
+        document.getElementById('favourite-list').innerHtml = '';
+        var favouriteData = window.localStorage.getItem('favourites_string');
+
+        if(favouriteData===null) {
+            document.getElementById('favourite-list').innerHtml = 'Empty';
+        }else{
+            // converting piped data of local storage to html content 
+            favouriteData = JSON.parse(favouriteData)
+            contentHTML = ''
+            for(var i = 0; i < favouriteData.length; i++){
+                console.log(favouriteData[i])
+                var piped_data = favouriteData[i]
+                var data = piped_data.split('|')
+                var _id = data[0];
+                var name = data[1];
+                contentHTML += `<div id="favourite${_id}" class="my-2 d-flex flex-row justify-content-between"  type="button" data-toggle="modal" data-target="#model${_id}">   
+                                    <div class="d-flex flex-row">
+                                        <span><img style="height:30px;width:30px" src="https://s2.coinmarketcap.com/static/img/coins/64x64/${_id}.png"></span>
+                                        <span  style="font-size:18px" class="ml-2">  ${ name} </span> 
+                                    </div>
+                                </div>
+                              `
+            }
+            document.getElementById('favourite-list').innerHTML = contentHTML
+        }
+    }
+
+
+
+
+</script>
+
+</html>
