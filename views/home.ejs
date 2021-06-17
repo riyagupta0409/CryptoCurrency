@@ -227,6 +227,7 @@
 
     // function to check click on add to favourite and remove favourite 
     $(document).click(function(e) {
+            if(!e.target.parentElement.className){return;}
             if(e.target.parentElement.className==='add-to-favourite') {
                 add_to_favourite(e.target.parentElement,e.target.parentElement.parentElement)
             }else if(e.target.parentElement.className==='remove-favourite'){
@@ -303,10 +304,7 @@
     function  remove_from_show_in_favourite(child,node){
         id = node.id
         var check_id = 'favourite'+id
-        console.log(check_id)
         var node_to_remove = document.getElementById(check_id);
-        
-        console.log(node_to_remove)
         document.getElementById('favourite-list').removeChild(node_to_remove);
         child.className = 'add-to-favourite';
         child.innerHTML = `<td class="add-to-favourite"><i class="fa fa-star-o" style="font-size:24px"></i></td>`  
@@ -318,7 +316,6 @@
         // complete data will be added again 
         document.getElementById('favourite-list').innerHtml = '';
         var favouriteData = window.localStorage.getItem('favourites_string');
-
         if(favouriteData===null) {
             document.getElementById('favourite-list').innerHtml = 'Empty';
         }else{
